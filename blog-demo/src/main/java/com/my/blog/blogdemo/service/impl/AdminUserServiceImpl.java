@@ -17,4 +17,39 @@ public class AdminUserServiceImpl implements AdminUserService {
         String passwordMd5 = MD5Util.MD5Encode(password,"UTF-8");
         return adminUserMapper.login(userName,passwordMd5);
     }
+    @Override
+    public AdminUser getUserDetailById(Integer loginUserId){
+        return adminUserMapper.selectByPrimaryKey(loginUserId);
+    };
+    @Override
+    public Boolean updatePassword(Integer loginUserId, String originalPassword, String newPassword){
+        AdminUser adminUser = adminUserMapper.selectByPrimaryKey(loginUserId);
+        //有这条数据才能更新
+        if(adminUser!=null){
+            String originalPasswordMd5 = MD5Util.MD5Encode(originalPassword, "UTF-8");
+            String newPasswordMd5 = MD5Util.MD5Encode(newPassword, "UTF-8");
+            //如果输入的原密码和数据库存储的原密码内容一致
+            if(originalPasswordMd5.equals(adminUser.getLoginPassword())){
+                adminUser.setLoginPassword(newPasswordMd5);
+                if (adminUserMapper.updateByPrimaryKeySelective(adminUser) > 0) {
+                    //修改成功则返回true
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    @Override
+    public Boolean updateName(Integer loginUserId, String loginUserName, String nickName){
+        AdminUser adminUser = adminUserMapper.selectByPrimaryKey(loginUserId);
+        if(adminUser!=null){
+            adminUser.setLoginUserName(loginUserName);
+            adminUser.setNickName(nickName);
+            if (adminUserMapper.updateByPrimaryKeySelective(adminUser) > 0) {
+                //修改成功则返回true
+                return true;
+            }
+        }
+        return false;
+    }
 }
