@@ -4,6 +4,7 @@ import com.my.blog.blogdemo.interceptor.AdminLoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -19,5 +20,10 @@ public class MyBlogMvcConfigurer implements WebMvcConfigurer {
                 excludePathPatterns("/admin/login").
                 excludePathPatterns("/admin/dist/**").
                 excludePathPatterns("/admin/plugins/**");
+    }
+
+    //文件上传的拦截器
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/upload/**").addResourceLocations("file:/home/project/upload/");
     }
 }
