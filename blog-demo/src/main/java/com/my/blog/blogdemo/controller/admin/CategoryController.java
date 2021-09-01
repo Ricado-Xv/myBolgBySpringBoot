@@ -24,8 +24,7 @@ public class CategoryController {
     @GetMapping("/categories")
     public String categoryPage(HttpServletRequest request){
         request.setAttribute("path","categories");
-        //return "admin/category";
-        return null;
+        return "admin/category";//返回的是对应的静态资源的位置
     }
     //分类列表
     @RequestMapping(value = "/categories/list", method = RequestMethod.GET)
