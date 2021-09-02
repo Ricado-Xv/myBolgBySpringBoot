@@ -35,7 +35,7 @@ public class BlogController {
                                      HttpServletResponse response,
                                      @RequestParam(name = "editormd-image-file", required = true)
                                              MultipartFile file) throws IOException, URISyntaxException {
-        String FILE_UPLOAD_DIC = "F:\\Spring-boot-博客\\demo\\myself\\blog-demo\\src\\main\\resources\\templates\\upload\\";//上传文件的默认url前缀，根据部署设置自行修改
+        String FILE_UPLOAD_DIC = "F:\\Spring-boot-博客\\demo\\myself\\blog-demo\\upload\\";//上传文件的默认url前缀，根据部署设置自行修改
         String fileName = file.getOriginalFilename();
         String suffixName = fileName.substring(fileName.lastIndexOf("."));
         //生成文件名称通用方法
@@ -47,6 +47,7 @@ public class BlogController {
         //创建文件
         File destFile = new File(FILE_UPLOAD_DIC + newFileName);
         String fileUrl = MyBlogUtils.getHost(new URI(request.getRequestURL() + "")) + "/upload/" + newFileName;
+        System.out.println(fileUrl);
         File fileDirectory = new File(FILE_UPLOAD_DIC);
         try {
             if (!fileDirectory.exists()) {

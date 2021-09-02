@@ -24,6 +24,6 @@ public class MyBlogMvcConfigurer implements WebMvcConfigurer {
 
     //文件上传的拦截器
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/upload/**").addResourceLocations("file:/home/project/upload/");
+        registry.addResourceHandler("/upload/**").addResourceLocations("F:\\Spring-boot-博客\\demo\\myself\\blog-demo\\upload\\");
     }
 }
