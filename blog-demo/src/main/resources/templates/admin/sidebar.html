@@ -57,6 +57,15 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a
+                            th:href="@{/admin/blogs}"
+                            th:class="${path}=='blogs'?'nav-link active':'nav-link'"
+                    >
+                        <i class="fa fa-list-alt nav-icon" aria-hidden="true"></i>
+                        <p>博客管理</p>
+                    </a>
+                </li>
                 <li class="nav-header">系统管理</li>
                 <li class="nav-item">
                     <a th:href="@{/admin/profile}"
