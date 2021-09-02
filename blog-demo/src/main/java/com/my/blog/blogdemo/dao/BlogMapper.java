@@ -1,7 +1,9 @@
 package com.my.blog.blogdemo.dao;
 
 import com.my.blog.blogdemo.entity.Blog;
+import com.my.blog.blogdemo.entity.BlogLink;
 import com.my.blog.blogdemo.util.PageQueryUtil;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -27,4 +29,8 @@ public interface BlogMapper {
     int getTotalBlogs(PageQueryUtil pageUtil);
 
     int deleteBatch(Integer[] ids);
+
+    List<Blog> findBlogListByType(@Param("type") int type, @Param("limit") int limit);
+
+
 }

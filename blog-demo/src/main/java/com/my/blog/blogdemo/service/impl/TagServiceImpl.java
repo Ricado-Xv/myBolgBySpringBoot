@@ -3,6 +3,7 @@ package com.my.blog.blogdemo.service.impl;
 import com.my.blog.blogdemo.dao.BlogTagMapper;
 import com.my.blog.blogdemo.dao.BlogTagRelationMapper;
 import com.my.blog.blogdemo.entity.BlogTag;
+import com.my.blog.blogdemo.entity.BlogTagCount;
 import com.my.blog.blogdemo.service.TagService;
 import com.my.blog.blogdemo.util.PageQueryUtil;
 import com.my.blog.blogdemo.util.PageResult;
@@ -44,5 +45,9 @@ public class TagServiceImpl  implements TagService{
         }
         //删除tag
         return blogTagMapper.deleteBatch(ids) > 0;
+    }
+    @Override
+    public List<BlogTagCount> getBlogTagCountForIndex(){
+        return blogTagMapper.getTagCount();
     }
 }
