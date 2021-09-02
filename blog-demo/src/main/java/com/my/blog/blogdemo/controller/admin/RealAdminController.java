@@ -12,12 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/admin")
-public class AdminController {
+@RequestMapping("/real_admin")
+public class RealAdminController {
     @Resource
     private AdminUserService adminUserService;
     @GetMapping({"/login"})
-    public String login(){return "admin/login";}
+    public String login(){return "real_admin/login";}
 
     @PostMapping(value = "/login")
     public String login(@RequestParam("userName") String userName,
@@ -26,43 +26,43 @@ public class AdminController {
                         HttpSession session){
         if(StringUtils.isEmpty(verifyCode)){
             session.setAttribute("errorMsg","验证码不能为空");
-            return "admin/login";
+            return "real_admin/login";
         }
         if(StringUtils.isEmpty(userName)||StringUtils.isEmpty(password)){
             session.setAttribute("errorMsg","用户名或密码不能为空");
-            return "admin/login";
+            return "real_admin/login";
         }
         String kaptchaCode = session.getAttribute("verifyCode")+"";
         if(StringUtils.isEmpty(kaptchaCode)||!verifyCode.equals(kaptchaCode)){
             session.setAttribute("errorMsg","验证码错误");
-            return "admin/login";
+            return "real_admin/login";
         }
         AdminUser adminUser = adminUserService.login(userName,password);
         if(adminUser != null){
             session.setAttribute("loginUser",adminUser.getNickName());
             session.setAttribute("loginUserId",adminUser.getAdminUserId());
             session.setMaxInactiveInterval(60*60*1);//一小时
-            return "redirect:/admin/index";
+            return "redirect:/real_admin/index";
         }else {
             session.setAttribute("errorMsg","登陆失败");
-            return "admin/login";
+            return "real_admin/login";
         }
     }
 
     @GetMapping({"","","/index","/index.html"})
-    public String index() {return "admin/index";}
+    public String index() {return "real_admin/index";}
 
     @GetMapping("/profile")
     public String profile(HttpServletRequest request) {
         Integer loginUserId = (int) request.getSession().getAttribute("loginUserId");
         AdminUser adminUser = adminUserService.getUserDetailById(loginUserId);
         if (adminUser == null) {
-            return "admin/login";
+            return "real_admin/login";
         }
         request.setAttribute("path", "profile");
         request.setAttribute("loginUserName", adminUser.getLoginUserName());
         request.setAttribute("nickName", adminUser.getNickName());
-        return "admin/profile";
+        return "real_admin/profile";
     }
 
     @PostMapping("/profile/password")
@@ -104,6 +104,6 @@ public class AdminController {
         request.getSession().removeAttribute("loginUserId");
         request.getSession().removeAttribute("loginUser");
         request.getSession().removeAttribute("errorMsg");
-        return "admin/login";
+        return "real_admin/login";
     }
 }

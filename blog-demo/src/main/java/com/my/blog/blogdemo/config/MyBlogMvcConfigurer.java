@@ -1,6 +1,7 @@
 package com.my.blog.blogdemo.config;
 
 import com.my.blog.blogdemo.interceptor.AdminLoginInterceptor;
+import com.my.blog.blogdemo.interceptor.RealAdminLoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -11,6 +12,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class MyBlogMvcConfigurer implements WebMvcConfigurer {
     @Autowired
     private AdminLoginInterceptor adminLoginInterceptor;
+    @Autowired
+    private RealAdminLoginInterceptor realAdminLoginInterceptor;
     //添加一个拦截器,拦截以/admin为前缀的url路径
     public void addInterceptors(InterceptorRegistry registry){
         //并对该拦截器所拦截的路径进行配置，由于后端管理系统的所有请求路径都以 /admin 开头，所以拦截的路径为 /admin/** ，
@@ -20,6 +23,11 @@ public class MyBlogMvcConfigurer implements WebMvcConfigurer {
                 excludePathPatterns("/admin/login").
                 excludePathPatterns("/admin/dist/**").
                 excludePathPatterns("/admin/plugins/**");
+        registry.addInterceptor(realAdminLoginInterceptor).
+                addPathPatterns("/real_admin/**").
+                excludePathPatterns("/real_admin/login").
+                excludePathPatterns("/real_admin/dist/**").
+                excludePathPatterns("/real_admin/plugins/**");
     }
 
     //文件上传的拦截器
