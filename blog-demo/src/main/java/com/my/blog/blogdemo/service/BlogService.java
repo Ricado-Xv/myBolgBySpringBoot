@@ -16,4 +16,5 @@ public interface BlogService {
     List<SimpleBlogListVO> getBlogListForIndexPage(int type);
     PageResult getBlogsForIndexPage(int page);
     PageResult getBlogsPageBySearch(String keyword,int page);
+    PageResult getBlogsPageByTag(String tagName,int page);
 }

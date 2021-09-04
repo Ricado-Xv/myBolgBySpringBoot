@@ -241,4 +241,23 @@ public class BlogServiceImpl implements BlogService {
         }
         return null;
     }
+    @Override
+    public PageResult getBlogsPageByTag(String tagName,int page){
+        if(PatternUtil.validKeyword(tagName)){
+            BlogTag tag = blogTagMapper.selectByTagName(tagName);
+            if(tag!=null&&page>0){
+                Map param = new HashMap();
+                param.put("page",page);
+                param.put("limit",9);
+                param.put("tagId",tag.getTagId());
+                PageQueryUtil pageUtil = new PageQueryUtil(param);
+                List<Blog> blogList = blogMapper.getBlogsPageByTagId(pageUtil);
+                List<BlogListVO> blogListVOS = getBlogListVOsByBlogs(blogList);
+                int total = blogMapper.getTotalBlogsByTagId(pageUtil);
+                PageResult pageResult = new PageResult(blogListVOS, total, pageUtil.getLimit(), pageUtil.getPage());
+                return pageResult;
+            }
+        }
+        return null;
+    }
 }

@@ -46,4 +46,17 @@ public class MyBlogController {
         request.setAttribute("keyword", keyword);
         return "blog/list";
     }
+    @GetMapping("/tag/{tagName}")
+    public String tag(HttpServletRequest request,@PathVariable("tagName") String tagName){
+        return tag(request,tagName,1);
+    }
+    @GetMapping("/tag/{tagName}/{page}")
+    public String tag(HttpServletRequest request,@PathVariable("tagName") String tagName,@PathVariable("page")Integer page){
+        PageResult blogPageResult = blogService.getBlogsPageByTag(tagName, page);
+        request.setAttribute("blogPageResult", blogPageResult);
+        request.setAttribute("pageName", "标签");
+        request.setAttribute("pageUrl", "tag");
+        request.setAttribute("keyword", tagName);
+        return "blog/list";
+    }
 }

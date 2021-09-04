@@ -232,6 +232,18 @@
         </if>
     </select>
 
+    <select id="getBlogsPageByTagId" parameterType="Map" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_blog
+        where blog_id IN (SELECT blog_id FROM tb_blog_tag_relation WHERE tag_id = #{tagId})
+        AND blog_status =1 AND is_deleted=0
+        order by blog_id desc
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
     <select id="findBlogListByType" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -275,4 +287,11 @@
         UPDATE tb_blog SET is_deleted = 1
         where blog_id = #{blogId,jdbcType=BIGINT} and is_deleted = 0
     </update>
+
+    <select id="getTotalBlogsByTagId" parameterType="Map" resultType="int">
+        select count(*)
+        from tb_blog
+        where  blog_id IN (SELECT blog_id FROM tb_blog_tag_relation WHERE tag_id = #{tagId})
+        AND blog_status =1 AND is_deleted=0
+    </select>
 </mapper>
