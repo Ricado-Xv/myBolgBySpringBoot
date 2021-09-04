@@ -1,5 +1,6 @@
 package com.my.blog.blogdemo.service;
 
+import com.my.blog.blogdemo.controller.vo.BlogDetailVO;
 import com.my.blog.blogdemo.controller.vo.SimpleBlogListVO;
 import com.my.blog.blogdemo.entity.Blog;
 import com.my.blog.blogdemo.util.PageQueryUtil;
@@ -17,4 +18,5 @@ public interface BlogService {
     PageResult getBlogsForIndexPage(int page);
     PageResult getBlogsPageBySearch(String keyword,int page);
     PageResult getBlogsPageByTag(String tagName,int page);
+    BlogDetailVO getBlogDetail(Long blogId);
 }
