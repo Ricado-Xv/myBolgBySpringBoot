@@ -15,4 +15,5 @@ public interface BlogService {
     Boolean deleteBatch(Integer[] ids);
     List<SimpleBlogListVO> getBlogListForIndexPage(int type);
     PageResult getBlogsForIndexPage(int page);
+    PageResult getBlogsPageBySearch(String keyword,int page);
 }

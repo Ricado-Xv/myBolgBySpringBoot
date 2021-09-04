@@ -13,11 +13,13 @@ import com.my.blog.blogdemo.entity.BlogTagRelation;
 import com.my.blog.blogdemo.service.BlogService;
 import com.my.blog.blogdemo.util.PageQueryUtil;
 import com.my.blog.blogdemo.util.PageResult;
+import com.my.blog.blogdemo.util.PatternUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.thymeleaf.util.PatternUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -220,5 +222,23 @@ public class BlogServiceImpl implements BlogService {
             }
         }
         return blogListVOS;
+    }
+    //根据关键字搜索数据
+    @Override
+    public PageResult getBlogsPageBySearch(String keyword, int page) {
+        if (page > 0 && PatternUtil.validKeyword(keyword)) {
+            Map param = new HashMap();
+            param.put("page", page);
+            param.put("limit", 9);
+            param.put("keyword", keyword);
+            param.put("blogStatus", 1);//过滤发布状态下的数据
+            PageQueryUtil pageUtil = new PageQueryUtil(param);
+            List<Blog> blogList = blogMapper.findBlogList(pageUtil);
+            List<BlogListVO> blogListVOS = getBlogListVOsByBlogs(blogList);
+            int total = blogMapper.getTotalBlogs(pageUtil);
+            PageResult pageResult = new PageResult(blogListVOS, total, pageUtil.getLimit(), pageUtil.getPage());
+            return pageResult;
+        }
+        return null;
     }
 }

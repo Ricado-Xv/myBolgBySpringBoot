@@ -112,7 +112,7 @@
                             <th:block th:if="${null != hotTags}">
                                 <th:block th:each="hotTag : ${hotTags}">
                                     <li>
-                                        <a>
+                                        <a th:href="@{'/tag/'+${hotTag.tagName}}">
                                             <th:block
                                                     th:text="${hotTag.tagName}+'('+${hotTag.tagCount}+')'"
                                             ></th:block>
@@ -131,5 +131,6 @@
 <script th:src="@{blog/js/jquery.min.js}"></script>
 <script th:src="@{blog/js/bootstrap.min.js}"></script>
 <script th:src="@{blog/js/modernizr.js}"></script>
+<script th:src="@{blog/js/search.js}"></script>
 </body>
 </html>
