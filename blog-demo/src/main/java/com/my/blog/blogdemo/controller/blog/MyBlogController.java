@@ -1,15 +1,18 @@
 package com.my.blog.blogdemo.controller.blog;
 
 import com.my.blog.blogdemo.controller.vo.BlogDetailVO;
+import com.my.blog.blogdemo.entity.BlogComment;
 import com.my.blog.blogdemo.service.BlogService;
+import com.my.blog.blogdemo.service.CommentService;
 import com.my.blog.blogdemo.service.TagService;
-import com.my.blog.blogdemo.util.PageResult;
+import com.my.blog.blogdemo.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @Controller
 public class MyBlogController {
@@ -17,6 +20,8 @@ public class MyBlogController {
     BlogService blogService;
     @Autowired
     TagService tagService;
+    @Autowired
+    CommentService commentService;
     @GetMapping({"/","/index","index.html"})
     public String index(HttpServletRequest request){
         return this.page(request,1);
@@ -61,12 +66,61 @@ public class MyBlogController {
         return "blog/list";
     }
     @GetMapping("/blog/{blogId}")
-    public String detail(HttpServletRequest request,@PathVariable("blogId") Long blogId){
+    public String detail(HttpServletRequest request,@PathVariable("blogId") Long blogId,@RequestParam(value = "commentPage", required = false, defaultValue = "1") Integer commentPage){
         BlogDetailVO blogDetailVO = blogService.getBlogDetail(blogId);
         if (blogDetailVO != null) {
             request.setAttribute("blogDetailVO", blogDetailVO);
+            request.setAttribute("commentPageResult", commentService.getCommentPageByBlogIdAndPageNum(blogId, commentPage));
         }
         request.setAttribute("pageName", "详情");
         return "blog/detail";
+    }
+    @PostMapping(value = "/blog/comment")
+    @ResponseBody
+    public Result comment(HttpServletRequest request, HttpSession session,
+                          @RequestParam Long blogId, @RequestParam String verifyCode,
+                          @RequestParam String commentator, @RequestParam String email,
+                          @RequestParam String websiteUrl, @RequestParam String commentBody) {
+        if (StringUtils.isEmpty(verifyCode)) {
+            return ResultGenerator.genFailResult("验证码不能为空");
+        }
+        String kaptchaCode = session.getAttribute("verifyCode") + "";
+        if (StringUtils.isEmpty(kaptchaCode)) {
+            return ResultGenerator.genFailResult("非法请求");
+        }
+        if (!verifyCode.equals(kaptchaCode)) {
+            return ResultGenerator.genFailResult("验证码错误");
+        }
+        String ref = request.getHeader("Referer");
+        if (StringUtils.isEmpty(ref)) {
+            return ResultGenerator.genFailResult("非法请求");
+        }
+        if (null == blogId || blogId < 0) {
+            return ResultGenerator.genFailResult("非法请求");
+        }
+        if (StringUtils.isEmpty(commentator)) {
+            return ResultGenerator.genFailResult("请输入称呼");
+        }
+        if (StringUtils.isEmpty(email)) {
+            return ResultGenerator.genFailResult("请输入邮箱地址");
+        }
+        if (!PatternUtil.isEmail(email)) {
+            return ResultGenerator.genFailResult("请输入正确的邮箱地址");
+        }
+        if (StringUtils.isEmpty(commentBody)) {
+            return ResultGenerator.genFailResult("请输入评论内容");
+        }
+        if (commentBody.trim().length() > 200) {
+            return ResultGenerator.genFailResult("评论内容过长");
+        }
+        BlogComment comment = new BlogComment();
+        comment.setBlogId(blogId);
+        comment.setCommentator(MyBlogUtils.cleanString(commentator));
+        comment.setEmail(email);
+        if (PatternUtil.isURL(websiteUrl)) {
+            comment.setWebsiteUrl(websiteUrl);
+        }
+        comment.setCommentBody(MyBlogUtils.cleanString(commentBody));
+        return ResultGenerator.genSuccessResult(commentService.addComment(comment));
     }
 }
